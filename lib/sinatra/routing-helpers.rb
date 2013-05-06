@@ -9,6 +9,10 @@ module Sinatra
       # better handling of referrer path
       def parsed_referrer_path
         if (!request.referrer.nil? && !request.referrer.empty?) && parsed_referrer = URI.parse(request.referrer)
+          if parsed_referrer.path.end_with?('/')
+            parsed_referrer.path.chop!
+          end
+
           parsed_referrer.path
         else
           nil
