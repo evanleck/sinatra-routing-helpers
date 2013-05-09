@@ -1,3 +1,5 @@
+require 'securerandom'
+require 'uri'
 require 'sinatra/base'
 require 'sinatra/routing-helpers/version'
 
@@ -40,7 +42,7 @@ module Sinatra
       end
 
       def busted_url(headed_to)
-        url_with_params(headed_to, ensure: secure_random)
+        url_with_params(headed_to, ensure: SecureRandom.hex(16))
       end
 
       # Returns the url of the referer along with the params posted to that page
@@ -72,7 +74,9 @@ module Sinatra
       app.helpers HelperMethods
 
       # block some things from the URL
-      app.set :params_blacklist, [:password, :_csrf, :ip]
+      app.set :params_blacklist, [
+        :password, :_csrf, :ip
+      ]
     end
   end
 
