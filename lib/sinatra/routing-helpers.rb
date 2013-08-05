@@ -38,7 +38,14 @@ module Sinatra
 
       # quickly build a URL with params
       def url_with_params(headed_to, extra_params = {})
-        headed_to + '?' + build_query(extra_params)
+        # pop off empty values to avoid cluttering the URL bar
+        cleaned_params = extra_params.reject { |key, value| value.nil? || value.empty? }
+
+        unless cleaned_params.empty?
+          headed_to + '?' + build_query(cleaned_params)
+        else
+          headed_to
+        end
       end
 
       def busted_url(headed_to)
