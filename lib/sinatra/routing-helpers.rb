@@ -40,12 +40,14 @@ module Sinatra
       def url_with_params(headed_to, extra_params = {})
         # pop off empty values to avoid cluttering the URL bar
         cleaned_params = extra_params.reject { |key, value| value.nil? || value.empty? }
+        parsed         = URI.parse(headed_to)
 
-        unless cleaned_params.empty?
-          headed_to + '?' + build_query(cleaned_params)
-        else
-          headed_to
+        # if we have anything to parse up, let's do it
+        if parsed.query || !cleaned_params.empty?
+          parsed.query = [parsed.query, build_query(cleaned_params)].compact.join('&')
         end
+
+        parsed.to_s
       end
 
       def busted_url(headed_to)
