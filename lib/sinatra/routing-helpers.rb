@@ -28,9 +28,9 @@ module Sinatra
         if route.class == String
           route == path_info
         elsif route.class == Array
-          route.map do |individual_route|
+          route.any? do |individual_route|
             path_info == individual_route
-          end.include?(true)
+          end
         else
           false
         end
@@ -71,7 +71,7 @@ module Sinatra
 
       # handles a non-working cancel button
       def back_or(new_path)
-        if back == '/' || back == request.path_info
+        if back.nil? || back == '' || back == '/' || back == request.path_info
           new_path
         else
           back
