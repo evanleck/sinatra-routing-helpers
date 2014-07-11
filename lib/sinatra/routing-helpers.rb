@@ -71,7 +71,7 @@ module Sinatra
 
       # handles a non-working cancel button
       def back_or(new_path)
-        if back.nil? || back == '' || back == '/' || back == request.path_info
+        if back.nil? || [request.path_info, uri(request.path_info), '/', ''].include?(back)
           new_path
         else
           back
