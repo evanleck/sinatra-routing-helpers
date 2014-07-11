@@ -8,14 +8,16 @@ module Sinatra
     module HelperMethods
       include Rack::Utils
 
-      # better handling of referrer path
-      def parsed_referrer_path
-        if (!request.referrer.nil? && !request.referrer.empty?) && parsed_referrer = URI.parse(request.referrer)
-          if parsed_referrer.path.end_with?('/')
-            parsed_referrer.path.chop!
+      # better handling of referer path
+      def parsed_referer_path
+        rf = request.referer
+
+        if (!rf.nil? && !rf.empty?) && parsed_referer = URI.parse(rf)
+          if parsed_referer.path.end_with?('/')
+            parsed_referer.path.chop!
           end
 
-          parsed_referrer.path
+          parsed_referer.path
         else
           nil
         end
@@ -25,12 +27,9 @@ module Sinatra
       def is_page?(route)
         path_info = request.path_info
 
-        if route.class == String
-          route == path_info
-        elsif route.class == Array
-          route.any? do |individual_route|
-            path_info == individual_route
-          end
+        case route
+        when String; route == path_info
+        when Array;  route.include?(individual_route)
         else
           false
         end
@@ -61,7 +60,7 @@ module Sinatra
       #   redirect to(back_with_params(my_extra_param: 'my extra value'))
       #
       def back_with_params(extra_params = {})
-        back_to       = parsed_referrer_path || '/'
+        back_to       = parsed_referer_path || '/'
         clean_params  = params.reject do |key, value|
           settings.params_blacklist.include?(key.to_sym)
         end
