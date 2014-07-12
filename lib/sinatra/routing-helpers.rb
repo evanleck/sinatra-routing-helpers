@@ -29,7 +29,7 @@ module Sinatra
 
         case route
         when String; route == path_info
-        when Array;  route.include?(individual_route)
+        when Array;  route.include?(path_info)
         else
           false
         end
